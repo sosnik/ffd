@@ -1,0 +1,11 @@
+{
+  "name": "ffd",
+  "version": "0.0.0",
+  "description": "fanfiction downloader",
+  "main": "ffd.js",
+  "dependencies": {
+    "http-agent": "*",
+    "jsdom": "*",
+    "request": "*"
+  }
+}
