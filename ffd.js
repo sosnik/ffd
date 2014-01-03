@@ -3,7 +3,8 @@ var httpAgent = require('http-agent'),
 	request = require('request'),
 	fs = require('fs');
 
-id = process.argv[2];
+var id = process.argv[2];
+var dir = "Stories";
 
 request({ uri:'https://www.fanfiction.net/s/' + id }, function (error, response, body) {
 	if (error && response.statusCode !== 200) {
@@ -11,12 +12,17 @@ request({ uri:'https://www.fanfiction.net/s/' + id }, function (error, response,
 		process.exit(-1);
 	}
 
+	fs.mkdir(dir);
+
 	jsdom.env({
 		html: body,
 		scripts: [ 'http://code.jquery.com/jquery-2.0.2.min.js' ],
 		done: function (er, window) {
 			var $ = window.jQuery;
 			var n = $('span select#chap_select option').length;
+
+			if (n === 0)
+				n = 1; // we still got one chapter
 
 			console.log('Got ' + n + ' chapters');
 
@@ -26,7 +32,7 @@ request({ uri:'https://www.fanfiction.net/s/' + id }, function (error, response,
 				console.log('Got title: ' + title)
 
 				// create file
-				var out = fs.createWriteStream(title.replace(/[\\/:*?"<>|]/g, " ") + '.rtf', { flags: 'w' });
+				var out = fs.createWriteStream(dir + '/' + title.replace(/[\\/:*?"<>|]/g, " ") + '.rtf', { flags: 'w' });
 
 				writeHeader(out);
 				writeTitle(out, title);
