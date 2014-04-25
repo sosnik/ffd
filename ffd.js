@@ -109,31 +109,33 @@ function writeFooter(stream, onDone) {
 
 function html2Rtf($, el, level) {
 	el.children().each(function() {
-		if (level < 10)
+		if (level < 100)
 			html2Rtf($, $(this), level + 1);
 		else
 			console.log('ERROR: Too many levels (' + $(this) + ')');
 	});
 
-	var tag = el.prop('tagName');
+	var tag = el.prop('tagName').toLowerCase();
 	var txt = el.html();
 
-	if (tag === 'P')
+	if (tag === 'p')
 		el.replaceWith(txt + '\\\n');
-	else if (tag === 'HR')
+	else if (tag === 'hr')
 		el.replaceWith('#-#-#\\\n');
-	else if (tag === 'BR')
+	else if (tag === 'br')
 		el.replaceWith('\\line');
-	else if (tag === 'STRONG')
+	else if (tag === 'strong')
 		el.replaceWith('\\b ' + txt + '\\b0 ');
-	else if (tag === 'EM')
+	else if (tag === 'em')
 		el.replaceWith('\\i ' + txt + '\\i0 ');
-	else if (tag === 'SPAN' && el.attr('style').indexOf("underline;") != -1)
+	else if (tag === 'span' && el.attr('style').indexOf("underline;") != -1)
 	el.replaceWith('\\ul ' + txt + '\\ul0 ');
-	else if (tag === 'DIV' && level === 0)
+	else if (tag === 'div' && level === 0)
 		; // do nothing, body
-	else
-		console.log('ERROR: Unknown tag ' + tag);
+	else {
+		console.log('WARNING: Unknown tag ' + tag);
+		el.replaceWith(txt);
+	}
 }
 
 function unicodeEscape(str) {
