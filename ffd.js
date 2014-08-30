@@ -6,6 +6,17 @@ var httpAgent = require('http-agent'),
 var id = process.argv[2];
 var dir = "Stories";
 
+var from = 1;
+var to = 0;
+
+if (process.argv.length > 3) {
+	from = process.argv[3];
+}
+
+if (process.argv.length > 4) {
+	to = process.argv[4];
+}
+
 request({ uri:'https://www.fanfiction.net/s/' + id }, function (error, response, body) {
 	if (error && response.statusCode !== 200) {
 		console.log('Error contacting fanfiction.net');
@@ -38,12 +49,18 @@ request({ uri:'https://www.fanfiction.net/s/' + id }, function (error, response,
 				writeTitle(out, title);
 
 				var chs = [];
-				for (var i = 1; i <= n; i++) {
+
+				/* set to */
+				if (to !== 0 && to < n) {
+					n = to;
+				}
+
+				for (var i = from; i <= n; i++) {
 					chs.push('s/' + id + '/' + i);
 				}
 
 				var agent = httpAgent.create('www.fanfiction.net', chs);
-				var curChapter = 1;
+				var curChapter = from;
 
 				agent.addListener('next', function (err, agent) {
 					if (err)
