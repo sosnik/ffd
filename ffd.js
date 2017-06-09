@@ -4,6 +4,11 @@ var httpAgent = require('http-agent'),
 	fs = require('fs');
 
 var id = process.argv[2];
+	if (id.startsWith('https://')) {
+		id = id.split('/');
+		id = id[4]
+		console.log("Got storycode " + id)
+	}
 var dir = "Stories";
 
 var from = 1;
@@ -23,7 +28,8 @@ request({ uri:'https://www.fanfiction.net/s/' + id }, function (error, response,
 		process.exit(-1);
 	}
 
-	fs.mkdir(dir);
+	fs.mkdir(dir, function(err) {
+		if (!err || err.code ===  'EEXIST') {
 
 	jsdom.env({
 		html: body,
@@ -97,6 +103,7 @@ request({ uri:'https://www.fanfiction.net/s/' + id }, function (error, response,
 			}
 		}
 	});
+	}});
 });
 
 function writeHeader(stream) {
